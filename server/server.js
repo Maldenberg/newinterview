@@ -4,6 +4,7 @@ const path = require("path");
 const multer = require("multer");
 const fs = require("fs");
 const { google } = require("googleapis");
+const moment = require("moment-timezone");
 
 const app = express();
 const upload = multer({ dest: "uploads/" });
@@ -56,15 +57,21 @@ async function appendDataToSheet(sheets, data) {
 async function createCalendarEvent(auth, eventDetails) {
   const calendar = google.calendar({ version: "v3", auth });
 
+  const moscowTimeStart = moment.tz(
+    eventDetails.startDateTime,
+    "Europe/Moscow"
+  );
+  const moscowTimeEnd = moment.tz(eventDetails.endDateTime, "Europe/Moscow");
+
   const event = {
     summary: eventDetails.summary,
     location: eventDetails.location,
     description: eventDetails.description,
-    start: { dateTime: eventDetails.startDateTime, timeZone: "Europe/Moscow" },
-    end: { dateTime: eventDetails.endDateTime, timeZone: "Europe/Moscow" },
+    start: { dateTime: moscowTimeStart.format(), timeZone: "Europe/Moscow" },
+    end: { dateTime: moscowTimeEnd.format(), timeZone: "Europe/Moscow" },
   };
 
-  const calendarId = "classroom107169243385611019012@group.calendar.google.com"; // ID вашего календаря
+  const calendarId = "classroom107169243385611019012@group.calendar.google.com";
   return await calendar.events.insert({ calendarId, resource: event });
 }
 
@@ -108,20 +115,20 @@ app.post(
         data
       );
 
+      const eventStart =
+        req.body.interview_date + "T" + req.body.interview_time;
+      const eventEnd = moment(eventStart)
+        .add(60, "minutes")
+        .format("YYYY-MM-DDTHH:mm:ss");
+
       const eventDetails = {
         summary: `Собеседование в ${req.body.company}`,
         location: "Online Meeting",
         description: `Ученик: ${req.body.name} ${req.body.surname}`,
-        startDateTime: new Date(
-          req.body.interview_date + "T" + req.body.interview_time
-        ).toISOString(),
-        endDateTime: new Date(
-          new Date(
-            req.body.interview_date + "T" + req.body.interview_time
-          ).getTime() +
-            30 * 60000
-        ).toISOString(), // +30 минут
+        startDateTime: eventStart,
+        endDateTime: eventEnd,
       };
+
       await createCalendarEvent(calendarAuth, eventDetails);
 
       res.status(200).send("Данные, файлы и событие календаря отправлены");
