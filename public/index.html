@@ -26,8 +26,10 @@
             data-parsley-required-message="Пожалуйста, выберите время собеседования" 
             placeholder="чч:мм">
 
-        <label for="surname">Фамилия:</label>
-        <input type="text" id="surname" name="surname" required placeholder="Иванов">
+            <label for="surname">Фамилия:</label>
+            <input type="text" id="surname" name="surname" required placeholder="Иванов">
+            <span class="error-message">Это поле обязательно для заполнения.</span>
+            
 
         <label for="name">Имя:</label>
         <input type="text" id="name" name="name" required placeholder="Иван">
@@ -37,7 +39,6 @@
 
         <label for="phone">Номер телефона:</label>
         <input type="tel" id="phone" name="phone" required 
-            pattern="^\+7[0-9]{10}$" 
             data-parsley-pattern-message="Введите номер в формате +7XXXXXXXXXX"
             data-parsley-required-message="Пожалуйста, введите номер телефона"
             placeholder="+79031234567">

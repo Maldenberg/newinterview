@@ -84,3 +84,47 @@ input[type="file"]::file-selector-button {
 input[type="file"]::file-selector-button:hover {
     background-color: #444;
 }
+
+/* Стили для сообщений об ошибке */
+input.invalid,
+textarea.invalid {
+  border: 2px solid #ff4d4d; /* красная граница для невалидных полей */
+}
+
+.error-message {
+  color: #ff4d4d; /* цвет текста для сообщений об ошибках */
+  display: none; /* скрыть по умолчанию */
+  font-size: 0.8em; /* размер шрифта для сообщений об ошибках */
+}
+
+
+/* Медиа-запросы для адаптивности */
+@media (max-width: 768px) {
+    form {
+        margin: 20px auto;
+        width: 90%; /* Уменьшаем ширину формы, чтобы она лучше помещалась на экран */
+    }
+
+    h1 {
+        font-size: 24px; /* Уменьшаем размер заголовка для маленьких экранов */
+    }
+
+    input, textarea, button, select {
+        font-size: 14px; /* Уменьшаем размер шрифта для лучшей читаемости */
+    }
+
+    p {
+        font-size: 10px; /* Уменьшаем размер шрифта подсказок */
+    }
+}
+
+@media (max-width: 480px) {
+    form {
+        width: 95%; /* Делаем форму шире на очень маленьких экранах */
+    }
+
+    /* Можно также уменьшить поля и отступы, если это необходимо */
+    input, textarea, button, select {
+        padding: 8px; /* Уменьшаем паддинги */
+    }
+}
