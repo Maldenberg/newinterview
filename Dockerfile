@@ -16,4 +16,4 @@ COPY . .
 EXPOSE 3000
 
 # Команда для запуска приложения
-CMD [ "node", "./server/server.js" ]
+CMD [ "node", "server/server.js" ]
