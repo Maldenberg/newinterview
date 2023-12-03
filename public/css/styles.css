@@ -9,10 +9,11 @@ body.dark-theme {
 
 form {
     max-width: 600px;
-    margin: 50px auto;
+    margin: 20px auto; /* Меньше отступ сверху и снизу */
     padding: 20px;
     background-color: #1e1e1e;
     border-radius: 5px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
 }
 
 h1 {
@@ -34,13 +35,14 @@ label {
 }
 
 input, textarea, button, select {
-    width: 95%;
+    width: calc(100% - 20px); /* Рассчитываем ширину с учетом отступов */
     padding: 10px;
     margin-bottom: 20px;
     border: 1px solid #333;
     background-color: #2a2a2a;
     color: #ddd;
     border-radius: 4px;
+}
 }
 
 button {
@@ -101,8 +103,7 @@ textarea.invalid {
 /* Медиа-запросы для адаптивности */
 @media (max-width: 768px) {
     form {
-        margin: 20px auto;
-        width: 90%; /* Уменьшаем ширину формы, чтобы она лучше помещалась на экран */
+        width: 90%; /* Уменьшаем ширину формы для устройств среднего размера */
     }
 
     h1 {
@@ -120,11 +121,25 @@ textarea.invalid {
 
 @media (max-width: 480px) {
     form {
-        width: 95%; /* Делаем форму шире на очень маленьких экранах */
+        width: 100%; /* Форма занимает всю ширину на маленьких экранах */
+        margin: 10px 0; /* Уменьшаем верхний и нижний отступ */
+        padding: 15px; /* Уменьшаем паддинги формы */
     }
 
-    /* Можно также уменьшить поля и отступы, если это необходимо */
     input, textarea, button, select {
-        padding: 8px; /* Уменьшаем паддинги */
+        width: 100%; /* Поля ввода занимают всю доступную ширину */
+        padding: 8px; /* Уменьшаем паддинги полей ввода */
+    }
+
+    h1 {
+        font-size: 20px; /* Ещё меньше для заголовка */
+    }
+
+    p, label {
+        font-size: 12px; /* Уменьшаем размер шрифта для меток и параграфов */
+    }
+
+    .error-message {
+        font-size: 10px; /* Уменьшаем размер шрифта для сообщений об ошибках */
     }
 }
