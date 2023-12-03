@@ -4,45 +4,63 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Запись на собеседование</title>
-    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/parsleyjs/dist/parsley.min.js"></script>
 </head>
-<body>
+<body class="dark-theme">
+
     <form id="interview-form" enctype="multipart/form-data">
+        <h1>Запись на собеседование:</h1>
+
         <label for="interview_date">Дата собеседования:</label>
-        <input type="date" id="interview_date" name="interview_date" required>
+        <input type="date" id="interview_date" name="interview_date" required 
+            data-parsley-required-message="Пожалуйста, выберите дату собеседования" 
+            placeholder="дд.мм.гггг">
 
         <label for="interview_time">Время собеседования:</label>
-        <input type="time" id="interview_time" name="interview_time" step="1800" required>
+        <p>(Необходимо указывать согласованное время в соответствии с таблицей)</p>
+        <input type="time" id="interview_time" name="interview_time" required
+            data-parsley-required-message="Пожалуйста, выберите время собеседования" 
+            placeholder="чч:мм">
 
         <label for="surname">Фамилия:</label>
-        <input type="text" id="surname" name="surname" required>
+        <input type="text" id="surname" name="surname" required placeholder="Иванов">
 
         <label for="name">Имя:</label>
-        <input type="text" id="name" name="name" required>
+        <input type="text" id="name" name="name" required placeholder="Иван">
 
         <label for="patronymic">Отчество:</label>
-        <input type="text" id="patronymic" name="patronymic">
+        <input type="text" id="patronymic" name="patronymic" placeholder="Иванович">
 
         <label for="phone">Номер телефона:</label>
-        <input type="tel" id="phone" name="phone" pattern="^\+7[0-9]{10}$" required>
+        <input type="tel" id="phone" name="phone" required 
+            pattern="^\+7[0-9]{10}$" 
+            data-parsley-pattern-message="Введите номер в формате +7XXXXXXXXXX"
+            data-parsley-required-message="Пожалуйста, введите номер телефона"
+            placeholder="+79031234567">
 
         <label for="vk_link">Ссылка на VK:</label>
-        <input type="url" id="vk_link" name="vk_link">
+        <input type="url" id="vk_link" name="vk_link" placeholder="https://vk.com/username">
 
         <label for="company">Название компании:</label>
-        <input type="text" id="company" name="company">
+        <input type="text" id="company" name="company" placeholder="ООО 'Рога и Копыта'">
 
         <label for="job_link">Ссылка на вакансию:</label>
-        <input type="url" id="job_link" name="job_link">
+        <input type="url" id="job_link" name="job_link" placeholder="https://example.com/vacancy">
 
         <label for="interview_link">Ссылка на собеседование:</label>
-        <input type="url" id="interview_link" name="interview_link">
+        <input type="url" id="interview_link" name="interview_link" placeholder="https://example.com/interview">
 
         <label for="hr">HR:</label>
-        <input type="text" id="hr" name="hr">
+        <p>(Имя + Мессенджер, в котором общались)</p>
+        <input type="text" id="hr" name="hr" placeholder="Петрова Анна (WhatsApp)">
 
         <label for="additional_info">Дополнительная информация:</label>
-        <textarea id="additional_info" name="additional_info"></textarea>
+        <p>(Дополни нужной инфой, для которой не нашлось места в полях)</p>
+        <textarea id="additional_info" name="additional_info" placeholder="Любая дополнительная информация"></textarea>
 
         <label for="application_form">Файл с анкетой:</label>
         <input type="file" id="application_form" name="application_form">
@@ -54,7 +72,6 @@
         <input type="file" id="resume_file" name="resume_file">
 
         <button type="submit">Отправить</button>
-
     </form>
 
     <script src="/js/script.js"></script>

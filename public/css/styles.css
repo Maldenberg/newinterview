@@ -1,44 +1,86 @@
-body {
-    font-family: Arial, sans-serif;
-    background-color: #f4f4f4;
+body.dark-theme {
+    font-family: 'Courier Prime', monospace;
+    background-color: #121212;
+    color: #e0e0e0;
     margin: 0;
     padding: 20px;
+    line-height: 1.6;
 }
 
 form {
     max-width: 600px;
-    margin: auto;
+    margin: 50px auto;
     padding: 20px;
-    background-color: #fff;
+    background-color: #1e1e1e;
     border-radius: 5px;
 }
 
-label {
-    display: block;
-    margin-bottom: 5px;
+h1 {
+    color: #ffffff;
+    text-align: center;
+    font-size: 28px;
+    margin-bottom: 20px;
 }
 
-input[type="text"], input[type="tel"], input[type="url"], 
-input[type="date"], input[type="time"], input[type="file"], 
-textarea {
-    width: 100%;
-    padding: 8px;
+p {
+    color: #bbbbbb;
+    font-size: 12px;
+}
+
+label {
+    color: #bbbbbb;
+    margin-bottom: .5rem;
+    font-size: 16px;
+}
+
+input, textarea, button, select {
+    width: 95%;
+    padding: 10px;
     margin-bottom: 20px;
-    border: 1px solid #ccc;
+    border: 1px solid #333;
+    background-color: #2a2a2a;
+    color: #ddd;
     border-radius: 4px;
 }
 
 button {
-    width: 100%;
-    padding: 10px;
-    background-color: #007bff;
+    background-color: #4CAF50; /* A nice green accent color for the submit button */
     color: white;
     border: none;
-    border-radius: 4px;
+    padding: 15px 20px;
     cursor: pointer;
-    margin-top: 20px;
+    font-size: 16px;
 }
 
 button:hover {
-    background-color: #0056b3;
+    background-color: #45a049;
+}
+
+/* Add transitions for interactive elements */
+input, textarea, button, select {
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+input:focus, textarea:focus, select:focus {
+    background-color: #333;
+    border-color: #444;
+}
+
+/* Adjust the file input to match the theme better */
+input[type="file"] {
+    background-color: transparent;
+    border: none;
+}
+
+/* Custom styles for file input buttons */
+input[type="file"]::file-selector-button {
+    background-color: #333;
+    color: #ddd;
+    padding: 10px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+input[type="file"]::file-selector-button:hover {
+    background-color: #444;
 }
