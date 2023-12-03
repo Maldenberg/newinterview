@@ -2,20 +2,19 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const path = require("path");
 const multer = require("multer");
+const fs = require("fs");
 const { google } = require("googleapis");
 
 const app = express();
-const upload = multer(); // используем multer для обработки данных формы
+const upload = multer({ dest: "uploads/" });
 
-// Middleware для разбора JSON и urlencoded данных и обслуживания статических файлов
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "../public")));
 
-// Функция для авторизации и создания клиента Google Sheets
-async function authorize() {
+async function authorizeSheets() {
   const auth = new google.auth.GoogleAuth({
-    keyFile: "server/signinterview-a58d8fb907cf.json", // Путь к файлу с учетными данными
+    keyFile: "server/signinterview-a58d8fb907cf.json",
     scopes: ["https://www.googleapis.com/auth/spreadsheets"],
   });
 
@@ -24,15 +23,49 @@ async function authorize() {
   return sheets;
 }
 
-// Функция для добавления данных в Google Sheets
-async function appendDataToSheet(sheets, data) {
-  const spreadsheetId = "1njNl2QSZ0H9DamWDafpxmx5KNvo6WUvOGyZk7oJQZgI"; // ID вашей Google таблицы
-  const range = "Sheet1!A1"; // Диапазон для добавления данных
+async function authorizeDrive() {
+  const auth = new google.auth.GoogleAuth({
+    keyFile: "server/signinterview-a58d8fb907cf.json",
+    scopes: ["https://www.googleapis.com/auth/drive"],
+  });
 
-  // Проверка наличия данных
-  if (data.length === 0 || data.every((item) => item === null || item === "")) {
-    throw new Error("Нет данных для отправки в Google Sheets");
-  }
+  return await auth.getClient();
+}
+
+async function uploadFileToDrive(auth, filename, mimetype, filePath) {
+  const drive = google.drive({ version: "v3", auth });
+
+  const fileMetadata = {
+    name: filename,
+  };
+  const media = {
+    mimeType: mimetype,
+    body: fs.createReadStream(filePath),
+  };
+
+  const file = await drive.files.create({
+    resource: fileMetadata,
+    media: media,
+    fields: "id",
+  });
+
+  // Настройка разрешений файла
+  await drive.permissions.create({
+    fileId: file.data.id,
+    requestBody: {
+      role: "reader",
+      type: "anyone",
+    },
+  });
+
+  // Возвращение URL файла
+  const fileUrl = `https://drive.google.com/uc?id=${file.data.id}`;
+  return fileUrl;
+}
+
+async function appendDataToSheet(sheets, data) {
+  const spreadsheetId = "1njNl2QSZ0H9DamWDafpxmx5KNvo6WUvOGyZk7oJQZgI";
+  const range = "Sheet1!A1";
 
   const response = await sheets.spreadsheets.values.append({
     spreadsheetId,
@@ -44,26 +77,48 @@ async function appendDataToSheet(sheets, data) {
   return response.data;
 }
 
-// Маршрут для обработки данных формы и их отправки в Google Sheets
-app.post("/submit-interview", upload.none(), async (req, res) => {
-  try {
-    const sheets = await authorize();
-    const data = Object.values(req.body); // Преобразует объект запроса в массив значений
+app.post(
+  "/submit-interview",
+  upload.fields([
+    { name: "application_form", maxCount: 1 },
+    { name: "legend_file", maxCount: 1 },
+    { name: "resume_file", maxCount: 1 },
+  ]),
+  async (req, res) => {
+    try {
+      const sheets = await authorizeSheets();
+      const driveAuth = await authorizeDrive();
 
-    await appendDataToSheet(sheets, data);
-    res.status(200).send("Данные отправлены в Google Sheets");
-  } catch (error) {
-    console.error("Ошибка при отправке данных в Google Sheets:", error);
-    res.status(500).send("Ошибка при обработке запроса");
+      const fileUrls = [];
+      for (let field in req.files) {
+        const files = req.files[field];
+        for (let file of files) {
+          const fileUrl = await uploadFileToDrive(
+            driveAuth,
+            file.originalname,
+            file.mimetype,
+            file.path
+          );
+          fileUrls.push(fileUrl);
+        }
+      }
+
+      const formData = Object.values(req.body);
+      const data = [...formData, ...fileUrls];
+
+      await appendDataToSheet(sheets, data);
+      res.status(200).send("Данные и файлы отправлены");
+    } catch (error) {
+      console.error("Ошибка при обработке запроса:", error);
+      res.status(500).send("Ошибка сервера");
+    }
   }
-});
+);
 
-// Маршрут для корневого URL, который отдает index.html
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "../public/index.html"));
 });
 
-// Запуск сервера
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Сервер запущен на порту ${PORT}`);

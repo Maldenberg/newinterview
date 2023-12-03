@@ -1,0 +1,107 @@
+*** Overview *** 
+URL https://stage-superapp.mr-group.ru/api/purchase/78/documents/241
+Method GET
+Response Code 200
+Request Start Time нояб. 29 2023 - 20:29:59
+Duration 907ms
+
+*** Request Header *** 
+dev-authorization f5GaD8jxJ8KwEM
+Content-Type application/json
+Authorization Bearer eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJjV1E3bDdrRER1TWtvS21OUkYzQU9VdzJGUlJEVC1wa2VnaXI0ZUY3ZElFIn0.eyJleHAiOjE3MDEyNjQ5MzQsImlhdCI6MTcwMTI2MTMzNCwiYXV0aF90aW1lIjoxNzAwNDkwMTY4LCJqdGkiOiIyM2E4Nzg1ZS1mMGI0LTRiYWQtOTRhZS03OTZlMDc5ZmNiMWUiLCJpc3MiOiJodHRwczovL2tleWRldi5tci1ncm91cC5ydS9yZWFsbXMvc3RhZ2UiLCJzdWIiOiJkNzU0MjBlYi05YTQ4LTQ2NWMtYTU4My0yOTFkM2IyMDJkYmMiLCJ0eXAiOiJCZWFyZXIiLCJhenAiOiJpb3MtYXBwIiwic2Vzc2lvbl9zdGF0ZSI6ImZhYzAzMTgwLTg4YTctNDE1YS1hZGUxLWY4NzdiMTI2YzYzYSIsImFjciI6IjEiLCJyZWFsbV9hY2Nlc3MiOnsicm9sZXMiOlsib2ZmbGluZV9hY2Nlc3MiLCJ1bWFfYXV0aG9yaXphdGlvbiIsImRlZmF1bHQtcm9sZXMtbXItc3VwZXJhcHAiXX0sInNjb3BlIjoib3BlbmlkIHByb2ZpbGUgb2ZmbGluZV9hY2Nlc3MgYWRkcmVzcyBlbWFpbCBwaG9uZSIsInNpZCI6ImZhYzAzMTgwLTg4YTctNDE1YS1hZGUxLWY4NzdiMTI2YzYzYSIsImFkZHJlc3MiOnt9LCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwidXNlcl9pZCI6IjU4Iiwicm9sZXMiOlsiY2xpZW50Il0sIm5hbWUiOiLQodC10YDQs9C10Lkg0JrQuNGB0LXQu9C10LIiLCJwaG9uZV9udW1iZXIiOiIrNzk5NTExMDgzOTQiLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiIxZWU4ZmMzZC02MThhLTQ0YTEtOTg3Yi0yMTIyYTJmMGRmY2IiLCJnaXZlbl9uYW1lIjoi0KHQtdGA0LPQtdC5IiwiZmFtaWx5X25hbWUiOiLQmtC40YHQtdC70LXQsiIsImVtYWlsIjoibWFsZGVuYmVyZ0BtYWlsLnJ1In0.T8MtJQDadES5corp5_pLg81mbcX63cmW1vH-ozi-x83KzAA2oUzkK2JhfyKBE7-GdA-sPARg4AGFNj99qm7NVfhKCbQFeV_jr53jw-3C59amXkpqhRt03JJSax6wfvpSjuhtGXhYWkXDIXMeYY10XIBQEz1ppoPA5-8Y32eBs2gHqPs-9YiBKFLdCoBM3f6Cp2Ti3be2RGEr2xo32Si4TqOxGe5-RnoXXZKFzpfmQdcuU8qpgum5oN2RrOfA874Tqz7cU7l6wnk1bWKgmft4ZquINVKdoKkBQD0Ru6aJCZ2NOLXh29VR5qD2JQN92RXR9TFsDENel4u0HKUiubvK4Q
+
+
+*** Request Body *** 
+-
+
+*** Response Header *** 
+p3p policyref="/bitrix/p3p.xml", CP="NON DSP COR CUR ADM DEV PSA PSD OUR UNR BUS UNI COM NAV INT DEM STA"
+Cache-Control no-store, no-cache, must-revalidate, no-cache, private
+Server nginx
+Pragma no-cache
+Vary Accept-Encoding
+Expires Thu, 19 Nov 1981 08:52:00 GMT
+x-powered-cms Bitrix Site Manager (594f4b61bf1c5b00df305aa02a9ca772)
+x-frame-options SAMEORIGIN
+Date Wed, 29 Nov 2023 13:30:00 GMT
+x-devsrv-cms Bitrix
+Strict-Transport-Security max-age=31536000; includeSubDomains; preload, max-age=31536000; includeSubDomains; preload, max-age=31536000; IncludeSubDomains
+Content-Type application/json
+Content-Encoding gzip
+Set-Cookie list_favourite=deleted; expires=Tue, 29-Nov-2022 13:30:20 GMT; Max-Age=0; path=/; httponly
+
+
+*** Response Body *** 
+{
+  "document" : {
+    "id" : 241,
+    "type" : "mortgage_application",
+    "name" : "Ипотечное одобрение",
+    "file_id" : null
+  },
+  "attributes" : [
+    {
+      "code" : "number",
+      "value" : "ИП553753",
+      "extra_value" : null,
+      "name" : "Номер заявки",
+      "formatted_value" : "ИП553753"
+    },
+    {
+      "code" : "program",
+      "value" : "Акция \"Выгодная ипотека с Халвой\"",
+      "extra_value" : null,
+      "name" : "Программа",
+      "formatted_value" : "Акция \"Выгодная ипотека с Халвой\""
+    },
+    {
+      "code" : "bank",
+      "value" : "Альфа-Банк",
+      "extra_value" : null,
+      "name" : "Банк",
+      "formatted_value" : "Альфа-Банк"
+    },
+    {
+      "code" : "rate",
+      "value" : "17.49",
+      "extra_value" : null,
+      "name" : "Ставка",
+      "formatted_value" : "17.49 %"
+    },
+    {
+      "code" : "payment",
+      "value" : "70344.53",
+      "extra_value" : null,
+      "name" : "Ежемесячный платеж",
+      "formatted_value" : "70 345 ₽"
+    },
+    {
+      "code" : "period",
+      "value" : "30",
+      "extra_value" : null,
+      "name" : "Срок",
+      "formatted_value" : "30 лет"
+    },
+    {
+      "code" : "initial_payment",
+      "value" : "4800000",
+      "extra_value" : null,
+      "name" : "Первоначальный взнос",
+      "formatted_value" : "4 800 000 ₽"
+    },
+    {
+      "code" : "credit_amount",
+      "value" : "4800000",
+      "extra_value" : null,
+      "name" : "Сумма кредита",
+      "formatted_value" : "4 800 000 ₽"
+    }
+  ]
+}
+
+------------------------------------------------------------------------
+------------------------------------------------------------------------
+------------------------------------------------------------------------
+
+
+
