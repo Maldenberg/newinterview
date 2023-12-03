@@ -12,21 +12,10 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "../public")));
 
-async function authorizeSheets() {
+async function authorizeGoogleAPI(scopes) {
   const auth = new google.auth.GoogleAuth({
     keyFile: "server/signinterview-a58d8fb907cf.json",
-    scopes: ["https://www.googleapis.com/auth/spreadsheets"],
-  });
-
-  const client = await auth.getClient();
-  const sheets = google.sheets({ version: "v4", auth: client });
-  return sheets;
-}
-
-async function authorizeDrive() {
-  const auth = new google.auth.GoogleAuth({
-    keyFile: "server/signinterview-a58d8fb907cf.json",
-    scopes: ["https://www.googleapis.com/auth/drive"],
+    scopes: scopes,
   });
 
   return await auth.getClient();
@@ -35,13 +24,8 @@ async function authorizeDrive() {
 async function uploadFileToDrive(auth, filename, mimetype, filePath) {
   const drive = google.drive({ version: "v3", auth });
 
-  const fileMetadata = {
-    name: filename,
-  };
-  const media = {
-    mimeType: mimetype,
-    body: fs.createReadStream(filePath),
-  };
+  const fileMetadata = { name: filename };
+  const media = { mimeType: mimetype, body: fs.createReadStream(filePath) };
 
   const file = await drive.files.create({
     resource: fileMetadata,
@@ -49,32 +33,39 @@ async function uploadFileToDrive(auth, filename, mimetype, filePath) {
     fields: "id",
   });
 
-  // Настройка разрешений файла
   await drive.permissions.create({
     fileId: file.data.id,
-    requestBody: {
-      role: "reader",
-      type: "anyone",
-    },
+    requestBody: { role: "reader", type: "anyone" },
   });
 
-  // Возвращение URL файла
-  const fileUrl = `https://drive.google.com/uc?id=${file.data.id}`;
-  return fileUrl;
+  return `https://drive.google.com/uc?id=${file.data.id}`;
 }
 
 async function appendDataToSheet(sheets, data) {
   const spreadsheetId = "1njNl2QSZ0H9DamWDafpxmx5KNvo6WUvOGyZk7oJQZgI";
   const range = "Sheet1!A1";
 
-  const response = await sheets.spreadsheets.values.append({
+  return await sheets.spreadsheets.values.append({
     spreadsheetId,
     range,
     valueInputOption: "USER_ENTERED",
     resource: { values: [data] },
   });
+}
 
-  return response.data;
+async function createCalendarEvent(auth, eventDetails) {
+  const calendar = google.calendar({ version: "v3", auth });
+
+  const event = {
+    summary: eventDetails.summary,
+    location: eventDetails.location,
+    description: eventDetails.description,
+    start: { dateTime: eventDetails.startDateTime, timeZone: "Europe/Moscow" },
+    end: { dateTime: eventDetails.endDateTime, timeZone: "Europe/Moscow" },
+  };
+
+  const calendarId = "classroom107169243385611019012@group.calendar.google.com"; // ID вашего календаря
+  return await calendar.events.insert({ calendarId, resource: event });
 }
 
 app.post(
@@ -86,8 +77,15 @@ app.post(
   ]),
   async (req, res) => {
     try {
-      const sheets = await authorizeSheets();
-      const driveAuth = await authorizeDrive();
+      const driveAuth = await authorizeGoogleAPI([
+        "https://www.googleapis.com/auth/drive",
+      ]);
+      const sheetsAuth = await authorizeGoogleAPI([
+        "https://www.googleapis.com/auth/spreadsheets",
+      ]);
+      const calendarAuth = await authorizeGoogleAPI([
+        "https://www.googleapis.com/auth/calendar",
+      ]);
 
       const fileUrls = [];
       for (let field in req.files) {
@@ -105,9 +103,28 @@ app.post(
 
       const formData = Object.values(req.body);
       const data = [...formData, ...fileUrls];
+      await appendDataToSheet(
+        google.sheets({ version: "v4", auth: sheetsAuth }),
+        data
+      );
 
-      await appendDataToSheet(sheets, data);
-      res.status(200).send("Данные и файлы отправлены");
+      const eventDetails = {
+        summary: `Собеседование в ${req.body.company}`,
+        location: "Online Meeting",
+        description: `Ученик: ${req.body.name} ${req.body.surname}`,
+        startDateTime: new Date(
+          req.body.interview_date + "T" + req.body.interview_time
+        ).toISOString(),
+        endDateTime: new Date(
+          new Date(
+            req.body.interview_date + "T" + req.body.interview_time
+          ).getTime() +
+            30 * 60000
+        ).toISOString(), // +30 минут
+      };
+      await createCalendarEvent(calendarAuth, eventDetails);
+
+      res.status(200).send("Данные, файлы и событие календаря отправлены");
     } catch (error) {
       console.error("Ошибка при обработке запроса:", error);
       res.status(500).send("Ошибка сервера");
