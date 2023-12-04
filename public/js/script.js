@@ -1,23 +1,22 @@
 document.addEventListener("DOMContentLoaded", function () {
   const form = document.getElementById("interview-form");
-  const submitButton = document.getElementById("submit-button");
 
   form.addEventListener("submit", function (event) {
     event.preventDefault();
 
-    let isFormValid = true;
+    // Отключаем валидацию формы
+    // let isFormValid = true;
 
-    // Проверяем валидность каждого поля
-    Array.from(form.elements).forEach((input) => {
-      if (input.tagName === "BUTTON") return; // Пропускаем кнопку отправки
-      validateInput(input);
-      if (!input.checkValidity()) isFormValid = false;
-    });
+    // Array.from(form.elements).forEach((input) => {
+    //   if (input.tagName === "BUTTON") return; // Пропускаем кнопку отправки
+    //   // validateInput(input); // Теперь не вызываем validateInput
+    //   if (!input.checkValidity()) isFormValid = false;
+    // });
 
-    if (!isFormValid) {
-      console.log("Форма заполнена некорректно");
-      return; // Прекращаем выполнение функции, если форма невалидна
-    }
+    // if (!isFormValid) {
+    //   console.log("Форма заполнена некорректно");
+    //   return; // Прекращаем выполнение функции, если форма невалидна
+    // }
 
     // Если форма валидна, продолжаем отправку
     submitButton.textContent = "Отправка...";
@@ -46,22 +45,22 @@ document.addEventListener("DOMContentLoaded", function () {
       });
   });
 
-  // Валидация поля при потере фокуса
-  Array.from(form.elements).forEach((input) => {
-    input.addEventListener("blur", function () {
-      validateInput(this);
-    });
-  });
+  // Убираем валидацию на потерю фокуса
+  // Array.from(form.elements).forEach((input) => {
+  //   input.addEventListener("blur", function () {
+  //     // validateInput(this); // Теперь не вызываем validateInput
+  //   });
+  // });
 
-  // Функция для валидации отдельного поля
-  function validateInput(input) {
-    let errorMessage = input.nextElementSibling;
-    if (!input.validity.valid) {
-      errorMessage.style.display = "block";
-      input.classList.add("invalid");
-    } else {
-      errorMessage.style.display = "none";
-      input.classList.remove("invalid");
-    }
-  }
+  // Убираем функцию validateInput
+  // function validateInput(input) {
+  //   let errorMessage = input.nextElementSibling;
+  //   if (!input.validity.valid) {
+  //     errorMessage.style.display = "block";
+  //     input.classList.add("invalid");
+  //   } else {
+  //     errorMessage.style.display = "none";
+  //     input.classList.remove("invalid");
+  //   }
+  // }
 });
