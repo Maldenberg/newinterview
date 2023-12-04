@@ -73,7 +73,20 @@
         <input type="file" id="resume_file" name="resume_file">
 
         <button type="submit" id="submit-button">Отправить</button>
+        <div id="loader" class="loader" hidden></div>
     </form>
+
+    <!-- Попап об успешной отправке -->
+    <div id="success-popup" class="popup" hidden>
+        <p>Данные успешно отправлены</p>
+        <button onclick="closePopup('success-popup')">OK</button>
+    </div>
+  
+    <!-- Попап об ошибке отправки -->
+    <div id="error-popup" class="popup" hidden>
+        <p>Произошла ошибка при отправке данных</p>
+        <button onclick="closePopup('error-popup')">OK</button>
+    </div>
 
     <script src="/js/script.js"></script>
 </body>
