@@ -19,8 +19,9 @@ document.addEventListener("DOMContentLoaded", function () {
     // }
 
     // Если форма валидна, продолжаем отправку
-    submitButton.textContent = "Отправка...";
-    submitButton.disabled = true;
+    // Эти строки можно раскомментировать, если они не вызывают проблем
+    // submitButton.textContent = "Отправка...";
+    // submitButton.disabled = true;
 
     const formData = new FormData(form);
 
@@ -35,13 +36,15 @@ document.addEventListener("DOMContentLoaded", function () {
       .then((response) => response.text())
       .then((result) => {
         console.log(result);
-        submitButton.textContent = "Отправить";
-        submitButton.disabled = false;
+        // Эти строки можно раскомментировать, если они не вызывают проблем
+        // submitButton.textContent = "Отправить";
+        // submitButton.disabled = false;
       })
       .catch((error) => {
         console.error("Ошибка:", error);
-        submitButton.textContent = "Отправить";
-        submitButton.disabled = false;
+        // Эти строки можно раскомментировать, если они не вызывают проблем
+        // submitButton.textContent = "Отправить";
+        // submitButton.disabled = false;
       });
   });
 

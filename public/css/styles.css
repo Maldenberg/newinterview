@@ -74,6 +74,28 @@ button:hover {
     form {
         padding: 10px;
     }
+    input[type="text"],
+    input[type="date"],
+    input[type="time"],
+    input[type="tel"],
+    input[type="url"],
+    input[type="file"],
+    textarea {
+    width: 96%; /* Устанавливаем ширину на 100% от родительского элемента */
+    -webkit-appearance: none; /* Отменяем стандартный вид для Safari и Chrome на iOS */
+    -moz-appearance: none; /* Отменяем стандартный вид для Firefox */
+    appearance: none; /* Отменяем стандартный вид для остальных браузеров */
+    padding: 10px; /* По желанию можно добавить padding */
+    border: 1px solid #ccc; /* По желанию можно задать стиль границы */
+    border-radius: 4px; /* Скругляем углы */
+    background-color: white; /* Устанавливаем белый фон */
+}
+
+/* Для исправления возможных проблем с высотой на iOS */
+input[type="date"],
+input[type="time"] {
+    height: 20px; /* Минимальная рекомендуемая высота для элементов ввода на мобильных устройствах */
+}
 }
 
 @media (max-width: 480px) {
@@ -82,9 +104,14 @@ button:hover {
     }
 
 
-input[type="date"],
-input[type="time"] {
-    width: 90%; /* Устанавливаем ширину на 100% от родительского элемента */
+    input[type="text"],
+    input[type="date"],
+    input[type="time"],
+    input[type="tel"],
+    input[type="url"],
+    input[type="file"],
+    textarea {
+    width: 94%; /* Устанавливаем ширину на 100% от родительского элемента */
     -webkit-appearance: none; /* Отменяем стандартный вид для Safari и Chrome на iOS */
     -moz-appearance: none; /* Отменяем стандартный вид для Firefox */
     appearance: none; /* Отменяем стандартный вид для остальных браузеров */
