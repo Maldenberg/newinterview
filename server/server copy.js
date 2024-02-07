@@ -110,33 +110,33 @@ app.post(
   ]),
   async (req, res) => {
     try {
-      // Запускаем все асинхронные операции параллельно
-      const [driveAuth, sheetsAuth, calendarAuth] = await Promise.all([
-        authorizeGoogleAPI(["https://www.googleapis.com/auth/drive"]),
-        authorizeGoogleAPI(["https://www.googleapis.com/auth/spreadsheets"]),
-        authorizeGoogleAPI(["https://www.googleapis.com/auth/calendar"]),
+      const driveAuth = await authorizeGoogleAPI([
+        "https://www.googleapis.com/auth/drive",
+      ]);
+      const sheetsAuth = await authorizeGoogleAPI([
+        "https://www.googleapis.com/auth/spreadsheets",
+      ]);
+      const calendarAuth = await authorizeGoogleAPI([
+        "https://www.googleapis.com/auth/calendar",
       ]);
 
-      const fileUploads = req.files
-        ? Object.entries(req.files)
-            .map(([field, files]) => {
-              return files.map((file) => {
-                return uploadFileToDrive(
-                  driveAuth,
-                  file.originalname,
-                  file.mimetype,
-                  file.path
-                );
-              });
-            })
-            .flat()
-        : [];
-
-      const fileUrls = await Promise.all(fileUploads);
+      const fileUrls = [];
+      for (let field in req.files) {
+        const files = req.files[field];
+        for (let file of files) {
+          const fileUrl = await uploadFileToDrive(
+            driveAuth,
+            file.originalname,
+            file.mimetype,
+            file.path
+          );
+          fileUrls.push(fileUrl);
+        }
+      }
 
       const formData = Object.values(req.body);
       const data = [...formData, ...fileUrls];
-      const sheetAppend = appendDataToSheet(
+      await appendDataToSheet(
         google.sheets({ version: "v4", auth: sheetsAuth }),
         data
       );
@@ -155,15 +155,8 @@ app.post(
         endDateTime: eventEnd,
       };
 
-      const calendarEvent = createCalendarEvent(calendarAuth, eventDetails);
-
-      // Подождем завершения операций записи в Google Sheets и создания события в календаре
-      await Promise.all([sheetAppend, calendarEvent]);
-
-      // Отправляем в Telegram без ожидания завершения
-      sendToTelegram(req.body, fileUrls).catch((error) => {
-        console.error("Ошибка при отправке в Telegram:", error);
-      });
+      await createCalendarEvent(calendarAuth, eventDetails);
+      await sendToTelegram(req.body, fileUrls);
 
       res
         .status(200)
