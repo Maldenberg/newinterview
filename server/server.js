@@ -14,6 +14,10 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "../public")));
 
+function escapeMarkdown(text) {
+  return text.replace(/_/g, "\\_");
+}
+
 async function authorizeGoogleAPI(scopes) {
   const auth = new google.auth.GoogleAuth({
     keyFile: "server/signinterview-a58d8fb907cf.json",
@@ -86,7 +90,23 @@ async function sendToTelegram(data, fileUrls) {
     }
   });
 
-  const message = `Новое собеседование:\n\n Дата и время: ${data.interview_date} ${data.interview_time}\nФИО: ${data.surname} ${data.name} ${data.patronymic}\nТелефон: ${data.phone}\nСсылка на ВК: ${data.vk_link}\nКонтора: ${data.company}\nСсылка на вакансию: ${data.job_link}\nСсылка на собес: ${data.interview_link}\nHR: ${data.hr}\nДоп.инфа: ${data.additional_info}${fileLinksMessage}`;
+  const message = `Новое собеседование:\n\n Дата и время: ${escapeMarkdown(
+    data.interview_date
+  )} ${escapeMarkdown(data.interview_time)}\nФИО: ${escapeMarkdown(
+    data.surname
+  )} ${escapeMarkdown(data.name)} ${escapeMarkdown(
+    data.patronymic
+  )}\nТелефон: ${escapeMarkdown(data.phone)}\nСсылка на ВК: ${escapeMarkdown(
+    data.vk_link
+  )}\nКонтора: ${escapeMarkdown(
+    data.company
+  )}\nСсылка на вакансию: ${escapeMarkdown(
+    data.job_link
+  )}\nСсылка на собес: ${escapeMarkdown(
+    data.interview_link
+  )}\nHR: ${escapeMarkdown(data.hr)}\nДоп.инфа: ${escapeMarkdown(
+    data.additional_info
+  )}${fileLinksMessage}`;
 
   await fetch(telegramUrl, {
     method: "POST",
@@ -110,33 +130,33 @@ app.post(
   ]),
   async (req, res) => {
     try {
-      // Запускаем все асинхронные операции параллельно
-      const [driveAuth, sheetsAuth, calendarAuth] = await Promise.all([
-        authorizeGoogleAPI(["https://www.googleapis.com/auth/drive"]),
-        authorizeGoogleAPI(["https://www.googleapis.com/auth/spreadsheets"]),
-        authorizeGoogleAPI(["https://www.googleapis.com/auth/calendar"]),
+      const driveAuth = await authorizeGoogleAPI([
+        "https://www.googleapis.com/auth/drive",
+      ]);
+      const sheetsAuth = await authorizeGoogleAPI([
+        "https://www.googleapis.com/auth/spreadsheets",
+      ]);
+      const calendarAuth = await authorizeGoogleAPI([
+        "https://www.googleapis.com/auth/calendar",
       ]);
 
-      const fileUploads = req.files
-        ? Object.entries(req.files)
-            .map(([field, files]) => {
-              return files.map((file) => {
-                return uploadFileToDrive(
-                  driveAuth,
-                  file.originalname,
-                  file.mimetype,
-                  file.path
-                );
-              });
-            })
-            .flat()
-        : [];
-
-      const fileUrls = await Promise.all(fileUploads);
+      const fileUrls = [];
+      for (let field in req.files) {
+        const files = req.files[field];
+        for (let file of files) {
+          const fileUrl = await uploadFileToDrive(
+            driveAuth,
+            file.originalname,
+            file.mimetype,
+            file.path
+          );
+          fileUrls.push(fileUrl);
+        }
+      }
 
       const formData = Object.values(req.body);
       const data = [...formData, ...fileUrls];
-      const sheetAppend = appendDataToSheet(
+      await appendDataToSheet(
         google.sheets({ version: "v4", auth: sheetsAuth }),
         data
       );
@@ -155,20 +175,13 @@ app.post(
         endDateTime: eventEnd,
       };
 
-      const calendarEvent = createCalendarEvent(calendarAuth, eventDetails);
-
-      // Подождем завершения операций записи в Google Sheets и создания события в календаре
-      await Promise.all([sheetAppend, calendarEvent]);
-
-      // Отправляем в Telegram без ожидания завершения
-      sendToTelegram(req.body, fileUrls).catch((error) => {
-        console.error("Ошибка при отправке в Telegram:", error);
-      });
+      await createCalendarEvent(calendarAuth, eventDetails);
+      await sendToTelegram(req.body, fileUrls);
 
       res
         .status(200)
         .send(
-          "Данные, файлы, событие календаря и сообщение в Telegram отправлены"
+          "Данные, файлы, событие календаря и сообщение в Telegram отправлены."
         );
     } catch (error) {
       console.error("Ошибка при обработке запроса:", error);
